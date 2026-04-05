@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+export PATH="$PATH:$HOME/.dotnet/tools"
+dotnet husky run
