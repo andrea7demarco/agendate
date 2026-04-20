@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity;
+using WebApi.Features.Professionals;
 using WebApi.Shared.Persistence;
 using WebApi.Shared.Providers;
 
@@ -36,14 +37,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddScoped<IApplicationDbContext>(options =>
-    options.GetRequiredService<ApplicationDbContext>()
+    (IApplicationDbContext)options.GetRequiredService<ApplicationDbContext>()
 );
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
 
 builder.Services.AddIdentityFeature(builder.Configuration);
-
+builder.Services.AddProfessionalFeatures();
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
@@ -62,6 +63,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityModule();
+app.MapProfessionalEndpoints();
 
 await app.SeedIdentityAsync();
 

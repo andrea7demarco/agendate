@@ -17,6 +17,7 @@ public class Result
     public bool IsFailure => !IsSuccess;
     public Error? Error { get; }
 
+    //    public static Result Success(List<Features.Professionals.UseCases.ListProfessionals.ProfessionalResponse> professionals) => new(true, null);
     public static Result Success() => new(true, null);
 
     public static Result Failure(Error error) => new(false, error);
