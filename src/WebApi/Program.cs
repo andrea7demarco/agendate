@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity;
 using WebApi.Features.Professionals;
 using WebApi.Shared.Persistence;
+using WebApi.shared.persistence.migrations;
 using WebApi.Shared.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
 
 builder.Services.AddIdentityFeature(builder.Configuration);
 builder.Services.AddProfessionalFeatures();
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");

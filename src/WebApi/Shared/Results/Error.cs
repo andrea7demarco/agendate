@@ -27,4 +27,9 @@ public sealed record Error(
 
     public static Error Failure(string code, string message) =>
         new(code, message, ErrorType.Failure);
+
+    internal static Error BadRequest(string v)
+    {
+        throw new NotImplementedException();
+    }
 }
