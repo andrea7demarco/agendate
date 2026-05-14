@@ -32,11 +32,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<WebApi.Shared.Persistence.ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-builder.Services.AddScoped<IApplicationDbContext>(options =>
-    options.GetRequiredService<ApplicationDbContext>()
+builder.Services.AddScoped<WebApi.Shared.Persistence.IApplicationDbContext>(sp =>
+    sp.GetRequiredService<WebApi.Shared.Persistence.ApplicationDbContext>()
 );
 
 builder.Services.AddHttpContextAccessor();
