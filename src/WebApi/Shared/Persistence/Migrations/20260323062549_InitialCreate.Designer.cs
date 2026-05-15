@@ -9,7 +9,7 @@ using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.shared.persistence
+namespace WebApi.Shared.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260323062549_InitialCreate")]

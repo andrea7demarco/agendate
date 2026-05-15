@@ -7,8 +7,7 @@ using WebApi.Features.Professionals.Domain;
 namespace WebApi.Shared.Persistence;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<ApplicationUser>(options),
-        IApplicationDbContext
+    : IdentityDbContext<ApplicationUser>(options), IApplicationDbContext
 {
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Person> People => Set<Person>();
@@ -17,11 +16,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        // Si aún no tienes configuraciones separadas para Person/Professional, descomenta temporalmente:
-        // builder.Entity<Person>().ToTable("People");
-        // builder.Entity<Professional>().ToTable("Professionals");
     }
 }

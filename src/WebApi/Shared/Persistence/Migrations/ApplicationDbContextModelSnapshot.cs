@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.shared.persistence
+namespace WebApi.Shared.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -173,10 +174,12 @@ namespace WebApi.shared.persistence
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -202,7 +205,9 @@ namespace WebApi.shared.persistence
                         .HasColumnType("boolean");
 
                     b.Property<bool>("RegistrationCompleted")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -246,7 +251,8 @@ namespace WebApi.shared.persistence
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -254,9 +260,12 @@ namespace WebApi.shared.persistence
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("WebApi.Features.People.Domain.Person", b =>
@@ -267,35 +276,36 @@ namespace WebApi.shared.persistence
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.Property<string>("Dni")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
+                    b.ToTable("People");
 
-                    b.ToTable("People", (string)null);
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Person");
 
-                    b.UseTptMappingStrategy();
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
@@ -305,14 +315,11 @@ namespace WebApi.shared.persistence
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<string>("AppointmentType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<int>("AppointmentType")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("ConsultationCost")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("NationalLicense")
                         .HasColumnType("text");
@@ -320,7 +327,7 @@ namespace WebApi.shared.persistence
                     b.Property<string>("ProvincialLicense")
                         .HasColumnType("text");
 
-                    b.ToTable("Professionals", (string)null);
+                    b.HasDiscriminator().HasValue("Professional");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -383,15 +390,6 @@ namespace WebApi.shared.persistence
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
-                {
-                    b.HasOne("WebApi.Features.People.Domain.Person", null)
-                        .WithOne()
-                        .HasForeignKey("WebApi.Features.Professionals.Domain.Professional", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Features.Identity.Domain.ApplicationUser", b =>

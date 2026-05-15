@@ -106,7 +106,6 @@ Features/
   Domain/
    AppointmentType.cs
    Professional.cs
-  Shared/Persistance/ApplicationDbContext.cs
   UseCases/CreateProfessional/
    Endpoint.cs
    Handler.cs
@@ -135,20 +134,24 @@ obj/Debug/net10.0/
  WebApi.AssemblyInfo.cs
  WebApi.GlobalUsings.g.cs
 Program.cs
-Shared/Persistence/Migrations/
- 20260323062549_InitialCreate.cs
- 20260323062549_InitialCreate.Designer.cs
- 20260326211947_AddTableRefreshToken.cs
- 20260326211947_AddTableRefreshToken.Designer.cs
- 20260415221947_AddMissingFieldsToPersonAndProfessional.cs
- 20260415221947_AddMissingFieldsToPersonAndProfessional.Designer.cs
- 20260416012818_AddAppointmentTypeEnum.cs
- 20260416012818_AddAppointmentTypeEnum.Designer.cs
- 20260416023815_AddPeopleAndProfessionals.cs
- 20260416023815_AddPeopleAndProfessionals.Designer.cs
- 20260416193621_CreatePeopleAndProfessionals.cs
- 20260416193621_CreatePeopleAndProfessionals.Designer.cs
- ApplicationDbContextModelSnapshot.cs
+Shared/Persistence/
+ ApplicationDbContext.cs
+ IApplicationDbContext.cs
+ IDesignTimeDbContextFactory.cs
+ Migrations/
+  20260323062549_InitialCreate.cs
+  20260323062549_InitialCreate.Designer.cs
+  20260326211947_AddTableRefreshToken.cs
+  20260326211947_AddTableRefreshToken.Designer.cs
+  20260415221947_AddMissingFieldsToPersonAndProfessional.cs
+  20260415221947_AddMissingFieldsToPersonAndProfessional.Designer.cs
+  20260416012818_AddAppointmentTypeEnum.cs
+  20260416012818_AddAppointmentTypeEnum.Designer.cs
+  20260416023815_AddPeopleAndProfessionals.cs
+  20260416023815_AddPeopleAndProfessionals.Designer.cs
+  20260515034844_CreatePeopleAndProfessionals.cs
+  20260515034844_CreatePeopleAndProfessionals.Designer.cs
+  ApplicationDbContextModelSnapshot.cs
 Shared/
  Providers/HttpContextProvider.cs
  Results/

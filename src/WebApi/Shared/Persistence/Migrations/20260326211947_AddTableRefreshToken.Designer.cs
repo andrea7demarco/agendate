@@ -9,7 +9,7 @@ using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.shared.persistence.migrations
+namespace WebApi.Shared.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260326211947_AddTableRefreshToken")]

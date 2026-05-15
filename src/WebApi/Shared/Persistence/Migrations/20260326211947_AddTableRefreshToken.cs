@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WebApi.shared.persistence.migrations
+namespace WebApi.Shared.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddTableRefreshToken : Migration

@@ -12,6 +12,6 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
 
         builder.Property(a => a.LastName).HasMaxLength(100);
 
-        builder.Property(a => a.RegistrationCompleted).HasDefaultValue(false);
+        builder.Property(a => a.RegistrationCompleted).IsRequired().HasDefaultValue(false);
     }
 }

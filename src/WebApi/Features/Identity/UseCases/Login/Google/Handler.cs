@@ -67,6 +67,7 @@ public sealed class GoogleLoginHandler(
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName,
                     EmailConfirmed = payload.EmailVerified,
+                    RegistrationCompleted = false,
                 };
 
                 var createResult = await _userManager.CreateAsync(user);
@@ -154,7 +155,7 @@ public sealed class GoogleLoginHandler(
                     FirstName: user.FirstName,
                     LastName: user.LastName,
                     Role: role,
-                    RegistrationCompleted: user.EmailConfirmed
+                    RegistrationCompleted: user.RegistrationCompleted
                 )
             )
         );
