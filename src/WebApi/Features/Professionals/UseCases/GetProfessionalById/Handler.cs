@@ -6,9 +6,9 @@ namespace WebApi.Features.Professionals.UseCases.GetProfessionalById;
 
 public class GetProfessionalByIdHandler
 {
-    private readonly ApplicationDbContext _context; //unidad de trabajo con la bd (se inyecta en el constructor) dependecy injection
+    private readonly IApplicationDbContext _context; //unidad de trabajo con la bd (se inyecta en el constructor) dependecy injection
 
-    public GetProfessionalByIdHandler(ApplicationDbContext context)
+    public GetProfessionalByIdHandler(IApplicationDbContext context)
     {
         _context = context;
     }

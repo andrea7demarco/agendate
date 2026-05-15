@@ -8,9 +8,9 @@ namespace WebApi.Features.Professionals.UseCases.CreateProfessional;
 
 public class CreateProfessionalHandler
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public CreateProfessionalHandler(ApplicationDbContext context)
+    public CreateProfessionalHandler(IApplicationDbContext context)
     {
         _context = context;
     }

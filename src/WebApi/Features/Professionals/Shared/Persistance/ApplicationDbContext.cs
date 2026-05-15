@@ -4,38 +4,24 @@ using WebApi.Features.Identity.Domain;
 using WebApi.Features.People.Domain;
 using WebApi.Features.Professionals.Domain;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+namespace WebApi.Shared.Persistence;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options),
+        IApplicationDbContext
 {
-    public ApplicationDbContext() { }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
-
-    public DbSet<Person> People { get; set; }
-    public DbSet<Professional> Professionals { get; set; }
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Person> People => Set<Person>();
+    public DbSet<Professional> Professionals => Set<Professional>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        // Configurar TPT
-        builder.Entity<Person>().ToTable("People");
-        builder.Entity<Professional>().ToTable("Professionals");
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        // Configuraciones adicionales...
-        builder.Entity<Person>(entity =>
-        {
-            entity.HasKey(p => p.Id);
-            entity.Property(p => p.FirstName).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.Email).IsRequired().HasMaxLength(100);
-            entity.HasIndex(p => p.Email).IsUnique();
-        });
-
-        builder.Entity<Professional>(entity =>
-        {
-            entity.Property(p => p.ConsultationCost).HasPrecision(10, 2);
-            entity.Property(p => p.AppointmentType).HasConversion<string>().HasMaxLength(20);
-        });
+        // Si aún no tienes configuraciones separadas para Person/Professional, descomenta temporalmente:
+        // builder.Entity<Person>().ToTable("People");
+        // builder.Entity<Professional>().ToTable("Professionals");
     }
 }

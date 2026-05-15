@@ -1,19 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity;
-using WebApi.Features.Professionals;
 using WebApi.Shared.Persistence;
-using WebApi.shared.persistence.migrations;
 using WebApi.Shared.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
@@ -37,21 +31,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-builder.Services.AddScoped<IApplicationDbContext>(options =>
-    (IApplicationDbContext)options.GetRequiredService<ApplicationDbContext>()
+
+builder.Services.AddScoped<IApplicationDbContext>(sp =>
+    sp.GetRequiredService<ApplicationDbContext>()
 );
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IHttpContextProvider, HttpContextProvider>();
 
 builder.Services.AddIdentityFeature(builder.Configuration);
-builder.Services.AddProfessionalFeatures();
 
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -65,7 +58,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityModule();
-app.MapProfessionalEndpoints();
 
 await app.SeedIdentityAsync();
 

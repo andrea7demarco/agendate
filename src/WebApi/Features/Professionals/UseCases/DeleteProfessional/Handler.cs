@@ -6,11 +6,11 @@ namespace WebApi.Features.Professionals.UseCases.DeleteProfessional;
 
 public class DeleteProfessionalHandler
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly GetProfessionalByIdHandler _getByIdHandler;
 
     public DeleteProfessionalHandler(
-        ApplicationDbContext context,
+        IApplicationDbContext context,
         GetProfessionalByIdHandler getByIdHandler
     )
     {

@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Shared.Persistence;
+using WebApi.Shared.Persistence;
 using WebApi.Shared.Results;
 
 namespace WebApi.Features.Professionals.UseCases.ListProfessionals;
 
 public class ListProfessionalsHandler
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public ListProfessionalsHandler(ApplicationDbContext context) => _context = context;
+    public ListProfessionalsHandler(IApplicationDbContext context) => _context = context;
 
     public async Task<Result<List<ProfessionalResponse>>> HandleAsync(CancellationToken ct)
     {
