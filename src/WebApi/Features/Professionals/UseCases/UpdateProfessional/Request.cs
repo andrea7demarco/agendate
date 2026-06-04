@@ -9,6 +9,9 @@ public record UpdateProfessionalRequest(
     decimal ConsultationCost,
     string AppointmentType,
     string? Address,
+    string? Province,
     string? NationalLicense,
-    string? ProvincialLicense
+    string? ProvincialLicense,
+    string? Biography,
+    List<int> SpecialtyIds
 );

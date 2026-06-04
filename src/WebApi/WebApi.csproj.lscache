@@ -151,6 +151,8 @@ Shared/Persistence/
   20260416023815_AddPeopleAndProfessionals.Designer.cs
   20260515034844_CreatePeopleAndProfessionals.cs
   20260515034844_CreatePeopleAndProfessionals.Designer.cs
+  20260515183833_RenameConsultationCost.cs
+  20260515183833_RenameConsultationCost.Designer.cs
   ApplicationDbContextModelSnapshot.cs
 Shared/
  Providers/HttpContextProvider.cs

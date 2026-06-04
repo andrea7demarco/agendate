@@ -5,5 +5,6 @@ public sealed record MeResponse(
     string? Email,
     string? FirstName,
     string? LastName,
-    string Role
+    string Role,
+    bool RegistrationCompleted
 );

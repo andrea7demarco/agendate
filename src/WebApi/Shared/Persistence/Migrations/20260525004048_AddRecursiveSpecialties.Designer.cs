@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.Shared.Persistence.Migrations
+namespace WebApi.shared.persistence.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260525004048_AddRecursiveSpecialties")]
+    partial class AddRecursiveSpecialties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,9 +396,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("text");
-
                     b.Property<int>("AppointmentType")
                         .HasColumnType("integer");
 
@@ -408,14 +408,8 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Property<string>("NationalLicense")
                         .HasColumnType("text");
 
-                    b.Property<string>("Province")
-                        .HasColumnType("text");
-
                     b.Property<string>("ProvincialLicense")
                         .HasColumnType("text");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
 
                     b.HasDiscriminator().HasValue("Professional");
                 });
@@ -528,16 +522,6 @@ namespace WebApi.Shared.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentSpecialty");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
-                {
-                    b.HasOne("WebApi.Features.Identity.Domain.ApplicationUser", "ApplicationUser")
-                        .WithOne()
-                        .HasForeignKey("WebApi.Features.Professionals.Domain.Professional", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("WebApi.Features.Identity.Domain.ApplicationUser", b =>

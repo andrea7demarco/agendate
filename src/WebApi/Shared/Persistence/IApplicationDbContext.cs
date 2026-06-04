@@ -10,5 +10,8 @@ public interface IApplicationDbContext
     DbSet<RefreshToken> RefreshTokens { get; }
     DbSet<Person> People { get; }
     DbSet<Professional> Professionals { get; }
+
+    DbSet<Specialty> Specialties { get; }
+    DbSet<ProfessionalSpecialty> ProfessionalSpecialties { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

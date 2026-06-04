@@ -85,24 +85,28 @@ public sealed class GoogleLoginHandler(
                         )
                     );
 
-                var addRoleResult = await _userManager.AddToRoleAsync(
-                    user,
-                    request.RegistrationKind
-                );
-                if (!addRoleResult.Succeeded)
+                if (!string.IsNullOrWhiteSpace(request.RegistrationKind))
                 {
-                    return Result<LoginResponse>.Failure(
-                        Error.Validation(
-                            "auth.user_role_assignment_failed",
-                            "No se pudo asignar el rol base al usuario.",
-                            addRoleResult
-                                .Errors.GroupBy(x => x.Code)
-                                .ToDictionary(
-                                    g => g.Key,
-                                    g => g.Select(x => x.Description).ToArray()
-                                )
-                        )
+                    var addRoleResult = await _userManager.AddToRoleAsync(
+                        user,
+                        request.RegistrationKind
                     );
+
+                    if (!addRoleResult.Succeeded)
+                    {
+                        return Result<LoginResponse>.Failure(
+                            Error.Validation(
+                                "auth.user_role_assignment_failed",
+                                "No se pudo asignar el rol base al usuario.",
+                                addRoleResult
+                                    .Errors.GroupBy(x => x.Code)
+                                    .ToDictionary(
+                                        g => g.Key,
+                                        g => g.Select(x => x.Description).ToArray()
+                                    )
+                            )
+                        );
+                    }
                 }
             }
 

@@ -10,6 +10,10 @@ builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, relo
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.Configure<RouteHandlerOptions>(options =>
+{
+    options.ThrowOnBadRequest = false;
+});
 
 builder.Services.AddCors(options =>
 {

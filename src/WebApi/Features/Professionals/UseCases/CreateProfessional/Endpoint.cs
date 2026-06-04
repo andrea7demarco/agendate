@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentValidation;
 using WebApi.Shared.Results;
 
@@ -11,12 +12,40 @@ public static class Endpoint
     }
 
     private static async Task<IResult> Handle(
-        CreateProfessionalRequest request,
+        HttpRequest httpRequest,
         CreateProfessionalHandler handler,
         IValidator<CreateProfessionalRequest> validator,
         CancellationToken ct
     )
     {
+        CreateProfessionalRequest? request;
+
+        try
+        {
+            request = await httpRequest.ReadFromJsonAsync<CreateProfessionalRequest>(
+                cancellationToken: ct
+            );
+        }
+        catch (JsonException ex)
+        {
+            return Result<CreateProfessionalResponse>
+                .Failure(Error.BadRequest($"JSON inválido: {ex.Message}"))
+                .ToHttpResult();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result<CreateProfessionalResponse>
+                .Failure(Error.BadRequest($"Request inválido: {ex.Message}"))
+                .ToHttpResult();
+        }
+
+        if (request is null)
+        {
+            return Result<CreateProfessionalResponse>
+                .Failure(Error.BadRequest("El body del request es obligatorio."))
+                .ToHttpResult();
+        }
+
         var validationResult = await validator.ValidateAsync(request, ct);
         if (!validationResult.IsValid)
             return validationResult.ToResult().ToHttpResult();

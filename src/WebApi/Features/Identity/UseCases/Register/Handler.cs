@@ -16,9 +16,29 @@ public sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
     {
         var existing = await _userManager.FindByEmailAsync(request.Email);
         if (existing is not null)
+        {
+            var canResumeProfessionalRegistration =
+                request.RegistrationKind == IdentityRoles.PROFESIONAL
+                && !existing.RegistrationCompleted
+                && await _userManager.IsInRoleAsync(existing, IdentityRoles.PROFESIONAL)
+                && await _userManager.CheckPasswordAsync(existing, request.Password);
+
+            if (canResumeProfessionalRegistration)
+            {
+                return Result<RegisterResponse>.Success(
+                    new RegisterResponse(
+                        UserId: existing.Id,
+                        Email: existing.Email!,
+                        FirstName: existing.FirstName,
+                        LastName: existing.LastName
+                    )
+                );
+            }
+
             return Result<RegisterResponse>.Failure(
                 IdentityErrors.EmailAlreadyExists(request.Email)
             );
+        }
 
         var user = new ApplicationUser
         {

@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.Shared.Persistence.Migrations
+namespace WebApi.shared.persistence.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260515183833_RenameConsultationCost")]
+    partial class RenameConsultationCost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,84 +311,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.HealthInsurance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ShortName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HealthInsurance");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalHealthInsurance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("HealthInsuranceId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProfessionalId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HealthInsuranceId");
-
-                    b.HasIndex("ProfessionalId");
-
-                    b.ToTable("ProfessionalHealthInsurance");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalSpecialty", b =>
-                {
-                    b.Property<int>("ProfessionalId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialtyId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ProfessionalId", "SpecialtyId");
-
-                    b.HasIndex("SpecialtyId");
-
-                    b.ToTable("ProfessionalSpecialties");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Specialty", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
-                    b.Property<int?>("ParentSpecialtyId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentSpecialtyId");
-
-                    b.ToTable("Specialties");
-                });
-
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
                 {
                     b.HasBaseType("WebApi.Features.People.Domain.Person");
@@ -393,14 +318,8 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("text");
-
                     b.Property<int>("AppointmentType")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Biography")
-                        .HasColumnType("text");
 
                     b.Property<decimal>("ConsultationCost")
                         .HasColumnType("numeric");
@@ -408,14 +327,8 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Property<string>("NationalLicense")
                         .HasColumnType("text");
 
-                    b.Property<string>("Province")
-                        .HasColumnType("text");
-
                     b.Property<string>("ProvincialLicense")
                         .HasColumnType("text");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
 
                     b.HasDiscriminator().HasValue("Professional");
                 });
@@ -482,86 +395,9 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalHealthInsurance", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.HealthInsurance", "HealthInsurance")
-                        .WithMany("ProfessionalHealthInsurances")
-                        .HasForeignKey("HealthInsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
-                        .WithMany("ProfessionalHealthInsurances")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HealthInsurance");
-
-                    b.Navigation("Professional");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalSpecialty", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
-                        .WithMany("ProfessionalSpecialties")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Features.Professionals.Domain.Specialty", "Specialty")
-                        .WithMany("ProfessionalSpecialties")
-                        .HasForeignKey("SpecialtyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Professional");
-
-                    b.Navigation("Specialty");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Specialty", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.Specialty", "ParentSpecialty")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentSpecialtyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ParentSpecialty");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
-                {
-                    b.HasOne("WebApi.Features.Identity.Domain.ApplicationUser", "ApplicationUser")
-                        .WithOne()
-                        .HasForeignKey("WebApi.Features.Professionals.Domain.Professional", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("WebApi.Features.Identity.Domain.ApplicationUser", b =>
                 {
                     b.Navigation("RefreshTokens");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.HealthInsurance", b =>
-                {
-                    b.Navigation("ProfessionalHealthInsurances");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Specialty", b =>
-                {
-                    b.Navigation("Children");
-
-                    b.Navigation("ProfessionalSpecialties");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
-                {
-                    b.Navigation("ProfessionalHealthInsurances");
-
-                    b.Navigation("ProfessionalSpecialties");
                 });
 #pragma warning restore 612, 618
         }

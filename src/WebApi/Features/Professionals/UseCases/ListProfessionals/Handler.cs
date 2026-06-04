@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Shared.Persistence;
-using WebApi.Shared.Persistence;
 using WebApi.Shared.Results;
 
 namespace WebApi.Features.Professionals.UseCases.ListProfessionals;
@@ -16,14 +15,18 @@ public class ListProfessionalsHandler
         var professionals = await _context
             .Professionals.Select(p => new ProfessionalResponse(
                 p.Id,
+                p.ApplicationUserId,
                 p.FirstName + " " + p.LastName,
                 p.Email,
                 p.PhoneNumber,
                 p.ConsultationCost,
                 p.AppointmentType.ToString(),
                 p.Address,
+                p.Province,
                 p.NationalLicense,
-                p.ProvincialLicense
+                p.ProvincialLicense,
+                p.Biography,
+                p.ProfessionalSpecialties.Select(ps => ps.Specialty.Name).ToList()
             ))
             .ToListAsync(ct);
         return Result<List<ProfessionalResponse>>.Success(professionals);

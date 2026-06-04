@@ -20,16 +20,24 @@ public class GetProfessionalByIdHandler
             .Where(p => p.Id == id)
             .Select(p => new ProfessionalResponse(
                 p.Id,
-                p.FirstName,
-                p.LastName,
+                p.ApplicationUserId,
+                (p.FirstName + " " + p.LastName).Trim(),
                 p.Dni,
                 p.PhoneNumber,
                 p.Email,
                 p.ConsultationCost,
                 p.AppointmentType.ToString(),
                 p.Address,
+                p.Province,
                 p.NationalLicense,
-                p.ProvincialLicense
+                p.ProvincialLicense,
+                p.Biography,
+                p.ProfessionalSpecialties.Select(ps => new SpecialtyResponse(
+                        ps.Specialty.Id,
+                        ps.Specialty.Name,
+                        ps.Specialty.ParentSpecialtyId
+                    ))
+                    .ToList()
             ))
             .FirstOrDefaultAsync(ct); //ejecuta la consulta en postgresql y devuelve el primer resultado , o null si no existe
 

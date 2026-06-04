@@ -1,17 +1,22 @@
 namespace WebApi.Features.Professionals.UseCases.GetProfessionalById;
 
+public record SpecialtyResponse(int Id, string Name, int? ParentSpecialtyId);
+
 public record ProfessionalResponse(
     int Id,
-    string FirstName,
-    string LastName,
+    string? ApplicationUserId,
+    string FullName,
     string? Dni,
     string? PhoneNumber,
     string Email,
     decimal ConsultationCost,
     string AppointmentType,
     string? Address,
+    string? Province,
     string? NationalLicense,
-    string? ProvincialLicense
+    string? ProvincialLicense,
+    string? Biography,
+    List<SpecialtyResponse> Specialties
 );
 
 //record tiene propiedades de solo lectura

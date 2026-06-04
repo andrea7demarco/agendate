@@ -28,8 +28,6 @@ public sealed record Error(
     public static Error Failure(string code, string message) =>
         new(code, message, ErrorType.Failure);
 
-    internal static Error BadRequest(string v)
-    {
-        throw new NotImplementedException();
-    }
+    public static Error BadRequest(string message) =>
+        new("bad_request", message, ErrorType.Validation);
 }

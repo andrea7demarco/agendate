@@ -6,6 +6,7 @@ using WebApi.Features.Identity.Domain;
 using WebApi.Features.Identity.Shared.Auth;
 using WebApi.Features.Identity.Shared.Authorization;
 using WebApi.Features.Identity.Shared.Persistence;
+using WebApi.Features.Identity.UseCases.CompleteRegistration;
 using WebApi.Features.Identity.UseCases.Login.Google;
 using WebApi.Features.Identity.UseCases.Login.Local;
 using WebApi.Features.Identity.UseCases.Register;
@@ -69,12 +70,14 @@ public static class DependencyInjection
 
         services.AddScoped<LocalLoginHandler>();
         services.AddScoped<GoogleLoginHandler>();
+        services.AddScoped<CompleteRegistrationHandler>();
         services.AddScoped<RegisterHandler>();
         services.AddScoped<IdentityRoleSeeder>();
 
         services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<LocalLoginRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<GoogleLoginRequest>();
+        services.AddValidatorsFromAssemblyContaining<CompleteRegistrationRequestValidator>();
 
         return services;
     }
@@ -84,6 +87,7 @@ public static class DependencyInjection
         var group = app.MapGroup("/api/identity").WithTags("Identity");
 
         UseCases.Register.Endpoint.Map(group);
+        UseCases.CompleteRegistration.Endpoint.Map(group);
         UseCases.Login.Local.Endpoint.Map(group);
         UseCases.Login.Google.Endpoint.Map(group);
         UseCases.Logout.Endpoint.Map(group);

@@ -10,9 +10,7 @@ namespace WebApi.shared.persistence.migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Professionals");
-
-            migrationBuilder.DropIndex(name: "IX_People_Email", table: "People");
+            migrationBuilder.Sql("""DROP INDEX IF EXISTS "IX_People_Email";""");
 
             migrationBuilder.AlterColumn<string>(
                 name: "TokenHash",

@@ -20,7 +20,9 @@ public class UpdateProfessionalHandler
         CancellationToken ct
     )
     {
-        var professional = await _context.Professionals.FirstOrDefaultAsync(p => p.Id == id, ct);
+        var professional = await _context
+            .Professionals.Include(p => p.ProfessionalSpecialties)
+            .FirstOrDefaultAsync(p => p.Id == id, ct);
 
         if (professional is null)
             return Result<UpdateProfessionalResponse>.Failure(
@@ -37,6 +39,16 @@ public class UpdateProfessionalHandler
         if (emailExists)
             return Result<UpdateProfessionalResponse>.Failure(
                 Error.Conflict("person.email_exists", "Ya existe otra persona con ese email.")
+            );
+        var specialtyIds = request.SpecialtyIds.Distinct().ToList();
+        var existingSpecialtyIds = await _context
+            .Specialties.Where(s => specialtyIds.Contains(s.Id))
+            .Select(s => s.Id)
+            .ToListAsync(ct);
+
+        if (existingSpecialtyIds.Count != specialtyIds.Count)
+            return Result<UpdateProfessionalResponse>.Failure(
+                Error.BadRequest("Hay especialidades inválidas en SpecialtyIds.")
             );
 
         professional.FirstName = request.FirstName;
@@ -56,9 +68,22 @@ public class UpdateProfessionalHandler
         professional.ConsultationCost = request.ConsultationCost;
         professional.AppointmentType = appointmentType;
         professional.Address = request.Address;
+        professional.Province = request.Province;
         professional.NationalLicense = request.NationalLicense;
         professional.ProvincialLicense = request.ProvincialLicense;
+        professional.Biography = request.Biography;
 
+        professional.ProfessionalSpecialties.Clear();
+        foreach (var specialtyId in specialtyIds)
+        {
+            professional.ProfessionalSpecialties.Add(
+                new ProfessionalSpecialty
+                {
+                    ProfessionalId = professional.Id,
+                    SpecialtyId = specialtyId,
+                }
+            );
+        }
         await _context.SaveChangesAsync(ct);
 
         var response = new UpdateProfessionalResponse(
