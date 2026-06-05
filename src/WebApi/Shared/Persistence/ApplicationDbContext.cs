@@ -56,5 +56,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .WithMany(x => x.ProfessionalSpecialties)
                 .HasForeignKey(x => x.SpecialtyId);
         });
+
+        builder.Entity<Patient>(e =>
+        {
+            e.Property(x => x.BirthDate).HasColumnType("date");
+        });
     }
 }

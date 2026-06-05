@@ -2,7 +2,7 @@ namespace WebApi.Features.Patients.UseCases.CreatePatient;
 
 public record CreatePatientRequest(
     string ApplicationUserId,
-    DateTime BirthDate,
+    DateOnly BirthDate,
     int Gender,
     string Email,
     string FirstName,

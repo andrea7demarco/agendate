@@ -12,7 +12,7 @@ public class CreatePatientRequestValidator : AbstractValidator<CreatePatientRequ
         RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(100);
         RuleFor(x => x.BirthDate)
             .NotEmpty()
-            .LessThan(DateTime.Today)
+            .LessThan(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("La fecha de nacimiento debe ser anterior a hoy.");
         RuleFor(x => x.Gender)
             .InclusiveBetween(1, 3)

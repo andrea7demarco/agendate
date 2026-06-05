@@ -4,6 +4,6 @@ namespace WebApi.Features.Patients.Domain;
 
 public class Patient : Person
 {
-    public DateTime BirthDate { get; set; }
+    public DateOnly BirthDate { get; set; }
     public Gender Gender { get; set; }
 }

@@ -5,7 +5,7 @@ namespace WebApi.Features.Identity.UseCases.CompleteRegistration;
 
 public sealed record CompleteRegistrationRequest(
     string RegistrationKind,
-    DateTime? BirthDate,
+    DateOnly? BirthDate,
     int? Gender,
     string? Dni,
     string? PhoneNumber,
