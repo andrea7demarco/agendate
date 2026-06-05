@@ -10,6 +10,7 @@ using WebApi.Features.Identity.UseCases.CompleteRegistration;
 using WebApi.Features.Identity.UseCases.Login.Google;
 using WebApi.Features.Identity.UseCases.Login.Local;
 using WebApi.Features.Identity.UseCases.Register;
+using WebApi.Features.Patients.UseCases.CreatePatient;
 using WebApi.Shared.Persistence;
 
 namespace WebApi.Features.Identity;
@@ -71,6 +72,7 @@ public static class DependencyInjection
         services.AddScoped<LocalLoginHandler>();
         services.AddScoped<GoogleLoginHandler>();
         services.AddScoped<CompleteRegistrationHandler>();
+        services.AddScoped<CreatePatientHandler>();
         services.AddScoped<RegisterHandler>();
         services.AddScoped<IdentityRoleSeeder>();
 

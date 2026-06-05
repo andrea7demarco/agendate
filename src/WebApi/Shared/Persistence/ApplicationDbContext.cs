@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity.Domain;
+using WebApi.Features.Patients.Domain;
 using WebApi.Features.People.Domain;
 using WebApi.Features.Professionals.Domain;
 
@@ -15,6 +16,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Professional> Professionals => Set<Professional>();
     public DbSet<Specialty> Specialties => Set<Specialty>();
     public DbSet<ProfessionalSpecialty> ProfessionalSpecialties => Set<ProfessionalSpecialty>();
+    public DbSet<Patient> Patients => Set<Patient>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -32,13 +34,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<Professional>(e =>
+        builder.Entity<Person>(e =>
         {
             e.HasIndex(x => x.ApplicationUserId).IsUnique();
 
             e.HasOne(x => x.ApplicationUser)
                 .WithOne()
-                .HasForeignKey<Professional>(x => x.ApplicationUserId)
+                .HasForeignKey<Person>(x => x.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

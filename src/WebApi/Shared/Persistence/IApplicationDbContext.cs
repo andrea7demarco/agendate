@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity.Domain;
+using WebApi.Features.Patients.Domain;
 using WebApi.Features.People.Domain;
 using WebApi.Features.Professionals.Domain;
 
@@ -13,5 +14,6 @@ public interface IApplicationDbContext
 
     DbSet<Specialty> Specialties { get; }
     DbSet<ProfessionalSpecialty> ProfessionalSpecialties { get; }
+    DbSet<Patient> Patients { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

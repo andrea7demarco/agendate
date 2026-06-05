@@ -1,13 +1,9 @@
-using WebApi.Features.Identity.Domain;
 using WebApi.Features.People.Domain;
 
 namespace WebApi.Features.Professionals.Domain;
 
 public class Professional : Person
 {
-    public string? ApplicationUserId { get; set; }
-    public ApplicationUser? ApplicationUser { get; set; }
-
     public decimal ConsultationCost { get; set; }
     public AppointmentType AppointmentType { get; set; }
     public string? Address { get; set; }

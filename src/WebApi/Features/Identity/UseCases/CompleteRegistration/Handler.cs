@@ -4,6 +4,7 @@ using WebApi.Features.Identity.Domain;
 using WebApi.Features.Identity.Shared.Auth;
 using WebApi.Features.Identity.Shared.Authorization;
 using WebApi.Features.Identity.UseCases.Login;
+using WebApi.Features.Patients.UseCases.CreatePatient;
 using WebApi.Features.Professionals.UseCases.CreateProfessional;
 using WebApi.Shared.Results;
 
@@ -12,6 +13,7 @@ namespace WebApi.Features.Identity.UseCases.CompleteRegistration;
 public sealed class CompleteRegistrationHandler(
     UserManager<ApplicationUser> userManager,
     ITokenProvider tokenProvider,
+    CreatePatientHandler createPatientHandler,
     CreateProfessionalHandler createProfessionalHandler
 )
 {
@@ -61,20 +63,22 @@ public sealed class CompleteRegistrationHandler(
 
         if (request.RegistrationKind == IdentityRoles.PACIENTE)
         {
+            var patientResult = await createPatientHandler.HandleAsync(
+                new CreatePatientRequest(
+                    ApplicationUserId: user.Id,
+                    BirthDate: request.BirthDate!.Value,
+                    Gender: request.Gender!.Value,
+                    Email: user.Email ?? string.Empty,
+                    FirstName: user.FirstName ?? string.Empty,
+                    LastName: user.LastName ?? string.Empty
+                ),
+                ct
+            );
+
+            if (patientResult.IsFailure)
+                return Result<LoginResponse>.Failure(patientResult.Error!);
+
             user.RegistrationCompleted = true;
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                return Result<LoginResponse>.Failure(
-                    Error.Validation(
-                        "auth.user_update_failed",
-                        "No se pudo completar el registro.",
-                        updateResult
-                            .Errors.GroupBy(x => x.Code)
-                            .ToDictionary(g => g.Key, g => g.Select(x => x.Description).ToArray())
-                    )
-                );
-            }
         }
 
         if (request.RegistrationKind == IdentityRoles.PROFESIONAL)

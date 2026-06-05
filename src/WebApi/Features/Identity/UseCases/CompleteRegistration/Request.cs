@@ -5,6 +5,8 @@ namespace WebApi.Features.Identity.UseCases.CompleteRegistration;
 
 public sealed record CompleteRegistrationRequest(
     string RegistrationKind,
+    DateTime? BirthDate,
+    int? Gender,
     string? Dni,
     string? PhoneNumber,
     decimal? ConsultationCost,
@@ -26,6 +28,20 @@ public sealed class CompleteRegistrationRequestValidator
             .NotEmpty()
             .Must(x => x is IdentityRoles.PACIENTE or IdentityRoles.PROFESIONAL)
             .WithMessage("El tipo de registro debe ser paciente o profesional.");
+
+        When(
+            x => x.RegistrationKind == IdentityRoles.PACIENTE,
+            () =>
+            {
+                RuleFor(x => x.BirthDate)
+                    .NotNull()
+                    .WithMessage("La fecha de nacimiento es obligatoria.");
+                RuleFor(x => x.Gender)
+                    .NotNull()
+                    .InclusiveBetween(1, 3)
+                    .WithMessage("El genero debe ser Masculino, Femenino u Otro.");
+            }
+        );
 
         When(
             x => x.RegistrationKind == IdentityRoles.PROFESIONAL,

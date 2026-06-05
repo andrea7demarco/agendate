@@ -47,7 +47,7 @@ public sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
             FirstName = request.FirstName,
             LastName = request.LastName,
             EmailConfirmed = true,
-            RegistrationCompleted = request.RegistrationKind != IdentityRoles.PROFESIONAL,
+            RegistrationCompleted = false,
         };
 
         var createResult = await _userManager.CreateAsync(user, request.Password);

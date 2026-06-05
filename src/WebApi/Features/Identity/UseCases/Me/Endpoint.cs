@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using WebApi.Features.Identity.Shared.Authorization;
 
 namespace WebApi.Features.Identity.UseCases.Me;
 
@@ -17,7 +18,9 @@ public static class Endpoint
                 Email: user.FindFirstValue(ClaimTypes.Email)!,
                 FirstName: user.FindFirstValue(ClaimTypes.GivenName),
                 LastName: user.FindFirstValue(ClaimTypes.Surname),
-                Role: user.FindFirstValue(ClaimTypes.Role)!
+                Role: user.FindFirstValue(ClaimTypes.Role)!,
+                RegistrationCompleted: user.FindFirstValue(CustomClaimTypes.RegistrationStatus)
+                    == "Completed"
             )
         );
     }
