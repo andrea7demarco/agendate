@@ -1,8 +1,10 @@
-﻿using Google.Apis.Auth;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebApi.Features.Identity.Domain;
 using WebApi.Features.Identity.Shared.Auth;
+using WebApi.Features.Identity.Shared.Authorization;
 using WebApi.Shared.Persistence;
 using WebApi.Shared.Providers;
 using WebApi.Shared.Results;
@@ -126,6 +128,7 @@ public sealed class GoogleLoginHandler(
                     )
                 );
         }
+        await ReconcileCompletedRegistrationAsync(user, ct);
 
         var roles = await _userManager.GetRolesAsync(user);
         var role = roles.FirstOrDefault() ?? string.Empty;
@@ -163,5 +166,69 @@ public sealed class GoogleLoginHandler(
                 )
             )
         );
+    }
+
+    private async Task ReconcileCompletedRegistrationAsync(
+        ApplicationUser user,
+        CancellationToken ct
+    )
+    {
+        var professional = await dbContext.Professionals.FirstOrDefaultAsync(
+            x => x.ApplicationUserId == user.Id,
+            ct
+        );
+        var patient = await dbContext.Patients.FirstOrDefaultAsync(
+            x => x.ApplicationUserId == user.Id,
+            ct
+        );
+
+        if (professional is null && !string.IsNullOrWhiteSpace(user.Email))
+        {
+            var normalizedEmail = user.Email.ToLower();
+            professional = await dbContext.Professionals.FirstOrDefaultAsync(
+                x => x.Email.ToLower() == normalizedEmail,
+                ct
+            );
+        }
+
+        if (patient is null && !string.IsNullOrWhiteSpace(user.Email))
+        {
+            var normalizedEmail = user.Email.ToLower();
+            patient = await dbContext.Patients.FirstOrDefaultAsync(
+                x => x.Email.ToLower() == normalizedEmail,
+                ct
+            );
+        }
+
+        var expectedRole =
+            professional is not null ? IdentityRoles.PROFESIONAL
+            : patient is not null ? IdentityRoles.PACIENTE
+            : null;
+
+        if (expectedRole is null)
+            return;
+
+        if (professional is not null && string.IsNullOrWhiteSpace(professional.ApplicationUserId))
+            professional.ApplicationUserId = user.Id;
+
+        if (patient is not null && string.IsNullOrWhiteSpace(patient.ApplicationUserId))
+            patient.ApplicationUserId = user.Id;
+
+        await dbContext.SaveChangesAsync(ct);
+
+        var roles = await _userManager.GetRolesAsync(user);
+        if (!roles.Contains(expectedRole))
+        {
+            if (roles.Count > 0)
+                await _userManager.RemoveFromRolesAsync(user, roles);
+
+            await _userManager.AddToRoleAsync(user, expectedRole);
+        }
+
+        if (!user.RegistrationCompleted)
+        {
+            user.RegistrationCompleted = true;
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

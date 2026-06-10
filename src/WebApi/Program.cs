@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Identity;
 using WebApi.Features.Patients;
+using WebApi.Features.Patients;
 using WebApi.Features.Professionals;
+using WebApi.Features.Profiles;
 using WebApi.Shared.Persistence;
 using WebApi.Shared.Providers;
 
@@ -49,7 +51,7 @@ builder.Services.AddIdentityFeature(builder.Configuration);
 
 builder.Services.AddProfessionalFeatures();
 builder.Services.AddPatientFeatures();
-
+builder.Services.AddProfilesFeature();
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
@@ -69,7 +71,7 @@ app.UseAuthorization();
 app.MapIdentityModule();
 app.MapProfessionalEndpoints();
 app.MapPatientEndpoints();
-
+app.MapProfilesModule();
 await app.SeedIdentityAsync();
 
 app.Run();

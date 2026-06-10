@@ -1,5 +1,8 @@
 using FluentValidation;
 using WebApi.Features.Patients.UseCases.CreatePatient;
+using WebApi.Features.Patients.UseCases.DeletePatient;
+using WebApi.Features.Patients.UseCases.GetPatientById;
+using WebApi.Features.Patients.UseCases.ListPatients;
 
 namespace WebApi.Features.Patients;
 
@@ -9,6 +12,9 @@ public static class DependencyInjection
     {
         services.AddScoped<CreatePatientHandler>();
         services.AddValidatorsFromAssemblyContaining<CreatePatientRequestValidator>();
+        services.AddScoped<ListPatientsHandler>();
+        services.AddScoped<GetPatientByIdHandler>();
+        services.AddScoped<DeletePatientHandler>();
 
         return services;
     }
@@ -18,7 +24,9 @@ public static class DependencyInjection
         var group = app.MapGroup("/api/patients").WithTags("Patients");
 
         UseCases.CreatePatient.Endpoint.Map(group);
-
+        UseCases.ListPatients.Endpoint.Map(group);
+        UseCases.GetPatientById.Endpoint.Map(group);
+        UseCases.DeletePatient.Endpoint.Map(group);
         return app;
     }
 }

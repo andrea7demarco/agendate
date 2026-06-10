@@ -11,6 +11,7 @@ public record CreateProfessionalRequest(
     string AppointmentType, // "Presencial", "Online" o "Ambos"
     string? Address,
     string Province,
+    string City,
     string NationalLicense,
     string ProvincialLicense,
     string? Biography,

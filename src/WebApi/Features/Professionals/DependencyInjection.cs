@@ -32,4 +32,5 @@ public static class DependencyInjection
         UseCases.UpdateProfessional.Endpoint.Map(group);
         return app;
     }
+
 }

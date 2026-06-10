@@ -15,3 +15,11 @@ public record ProfessionalResponse(
     string? Biography,
     List<string> Specialties
 );
+
+public record PaginatedProfessionalsResponse(
+    List<ProfessionalResponse> Items,
+    int Page,
+    int PageSize,
+    int TotalCount,
+    int TotalPages
+);
