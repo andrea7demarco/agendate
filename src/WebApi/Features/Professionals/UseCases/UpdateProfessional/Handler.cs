@@ -7,22 +7,23 @@ namespace WebApi.Features.Professionals.UseCases.UpdateProfessional;
 
 public class UpdateProfessionalHandler
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public UpdateProfessionalHandler(ApplicationDbContext context)
+    public UpdateProfessionalHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
     public async Task<Result<UpdateProfessionalResponse>> HandleAsync(
         int id,
+        string applicationUserId,
         UpdateProfessionalRequest request,
         CancellationToken ct
     )
     {
         var professional = await _context
             .Professionals.Include(p => p.ProfessionalSpecialties)
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
+            .FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == applicationUserId, ct);
 
         if (professional is null)
             return Result<UpdateProfessionalResponse>.Failure(

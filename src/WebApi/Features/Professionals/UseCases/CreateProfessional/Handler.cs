@@ -79,6 +79,20 @@ public class CreateProfessionalHandler
                 Error.BadRequest("Hay especialidades inválidas en SpecialtyIds.")
             );
 
+        var healthInsuranceIds = request.HealthInsuranceIds?.Distinct().ToList() ?? [];
+
+        var existingHealthInsuranceIds = await _context
+            .HealthInsurances.Where(x => healthInsuranceIds.Contains(x.Id) && x.IsActive)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+
+        if (existingHealthInsuranceIds.Count != healthInsuranceIds.Count)
+        {
+            return Result<CreateProfessionalResponse>.Failure(
+                Error.BadRequest("Hay obras sociales invalidas.")
+            );
+        }
+
         var appointmentType = request.AppointmentType switch
         {
             "Presencial" => AppointmentType.Presencial,
@@ -102,6 +116,9 @@ public class CreateProfessionalHandler
             NationalLicense = request.NationalLicense,
             ProvincialLicense = request.ProvincialLicense,
             Biography = request.Biography,
+            ProfessionalHealthInsurances = healthInsuranceIds
+                .Select(id => new ProfessionalHealthInsurance { HealthInsuranceId = id })
+                .ToList(),
         };
 
         foreach (var specialtyId in specialtyIds)

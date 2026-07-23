@@ -2,21 +2,21 @@ using System.Security.Claims;
 using FluentValidation;
 using WebApi.Shared.Results;
 
-namespace WebApi.Features.Professionals.UseCases.UpdateProfessional;
+namespace WebApi.Features.Patients.UseCases.UpdatePatient;
 
 public static class Endpoint
 {
     public static void Map(IEndpointRouteBuilder app)
     {
-        app.MapPut("/{id:int}", Handle).RequireAuthorization().WithName("Professionals_Update");
+        app.MapPut("/{id:int}", Handle).RequireAuthorization().WithName("Patients_Update");
     }
 
     private static async Task<IResult> Handle(
         int id,
         ClaimsPrincipal user,
-        UpdateProfessionalRequest request,
-        UpdateProfessionalHandler handler,
-        IValidator<UpdateProfessionalRequest> validator,
+        UpdatePatientRequest request,
+        UpdatePatientHandler handler,
+        IValidator<UpdatePatientRequest> validator,
         CancellationToken ct
     )
     {

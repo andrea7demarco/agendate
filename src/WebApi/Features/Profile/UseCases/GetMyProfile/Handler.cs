@@ -21,6 +21,8 @@ public class GetMyProfileHandler
     {
         var patient = await _context
             .Patients.AsNoTracking()
+            .Include(p => p.PatientHealthInsurances)
+                .ThenInclude(phi => phi.HealthInsurance)
             .FirstOrDefaultAsync(p => p.ApplicationUserId == applicationUserId, ct);
 
         if (patient is not null)
@@ -29,11 +31,21 @@ public class GetMyProfileHandler
             {
                 patient.Id,
                 patient.ApplicationUserId,
+                patient.FirstName,
+                patient.LastName,
                 FullName = $"{patient.FirstName} {patient.LastName}".Trim(),
                 patient.Email,
                 Gender = patient.Gender.ToString(),
                 patient.BirthDate,
                 Age = AgeCalculator.Calculate(patient.BirthDate),
+                HealthInsurances = patient.PatientHealthInsurances.Select(phi => new
+                {
+                    phi.HealthInsurance.Id,
+                    phi.HealthInsurance.Name,
+                    phi.HealthInsurance.Acronym,
+                    phi.AffiliateNumber,
+                    phi.PlanName,
+                }),
             };
 
             return Result<MyProfileResponse>.Success(
@@ -45,6 +57,8 @@ public class GetMyProfileHandler
             .Professionals.AsNoTracking()
             .Include(p => p.ProfessionalSpecialties)
                 .ThenInclude(ps => ps.Specialty)
+            .Include(p => p.ProfessionalHealthInsurances)
+                .ThenInclude(phi => phi.HealthInsurance)
             .FirstOrDefaultAsync(p => p.ApplicationUserId == applicationUserId, ct);
 
         if (professional is not null)
@@ -53,6 +67,8 @@ public class GetMyProfileHandler
             {
                 professional.Id,
                 professional.ApplicationUserId,
+                professional.FirstName,
+                professional.LastName,
                 FullName = $"{professional.FirstName} {professional.LastName}".Trim(),
                 professional.Email,
                 professional.Dni,
@@ -68,6 +84,12 @@ public class GetMyProfileHandler
                 {
                     ps.Specialty.Id,
                     ps.Specialty.Name,
+                }),
+                HealthInsurances = professional.ProfessionalHealthInsurances.Select(phi => new
+                {
+                    phi.HealthInsurance.Id,
+                    phi.HealthInsurance.Name,
+                    phi.HealthInsurance.Acronym,
                 }),
             };
 

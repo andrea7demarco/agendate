@@ -3,6 +3,7 @@ using WebApi.Features.Patients.UseCases.CreatePatient;
 using WebApi.Features.Patients.UseCases.DeletePatient;
 using WebApi.Features.Patients.UseCases.GetPatientById;
 using WebApi.Features.Patients.UseCases.ListPatients;
+using WebApi.Features.Patients.UseCases.UpdatePatient;
 
 namespace WebApi.Features.Patients;
 
@@ -15,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<ListPatientsHandler>();
         services.AddScoped<GetPatientByIdHandler>();
         services.AddScoped<DeletePatientHandler>();
+        services.AddScoped<UpdatePatientHandler>();
 
         return services;
     }
@@ -27,6 +29,7 @@ public static class DependencyInjection
         UseCases.ListPatients.Endpoint.Map(group);
         UseCases.GetPatientById.Endpoint.Map(group);
         UseCases.DeletePatient.Endpoint.Map(group);
+        UseCases.UpdatePatient.Endpoint.Map(group);
         return app;
     }
 }

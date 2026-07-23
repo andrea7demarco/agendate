@@ -74,7 +74,43 @@ public class CreatePatientHandler
             Email = request.Email,
             BirthDate = request.BirthDate,
             Gender = (Gender)request.Gender,
+            HasCud = request.HasCud,
         };
+
+        var healthInsurances = request.HealthInsurances ?? [];
+
+        var healthInsuranceIds = healthInsurances
+            .Select(x => x.HealthInsuranceId)
+            .Distinct()
+            .ToList();
+
+        var existingHealthInsuranceIds = await _context
+            .HealthInsurances.Where(x => healthInsuranceIds.Contains(x.Id) && x.IsActive)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+
+        if (existingHealthInsuranceIds.Count != healthInsuranceIds.Count)
+        {
+            return Result<CreatePatientResponse>.Failure(
+                Error.BadRequest("Hay obras sociales invalidas.")
+            );
+        }
+
+        patient.PatientHealthInsurances = healthInsurances
+            .GroupBy(x => x.HealthInsuranceId)
+            .Select(group =>
+            {
+                var item = group.First();
+
+                return new PatientHealthInsurance
+                {
+                    Patient = patient,
+                    HealthInsuranceId = item.HealthInsuranceId,
+                    AffiliateNumber = item.AffiliateNumber,
+                    PlanName = item.PlanName,
+                };
+            })
+            .ToList();
 
         _context.Patients.Add(patient);
 

@@ -14,4 +14,5 @@ public class Professional : Person
 
     public ICollection<ProfessionalHealthInsurance> ProfessionalHealthInsurances { get; set; } = [];
     public ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = [];
+    public ICollection<ProfessionalLocation> Locations { get; set; } = [];
 }

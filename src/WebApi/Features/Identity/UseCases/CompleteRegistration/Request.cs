@@ -7,16 +7,26 @@ public sealed record CompleteRegistrationRequest(
     string RegistrationKind,
     DateOnly? BirthDate,
     int? Gender,
+    bool? HasCud,
     string? Dni,
     string? PhoneNumber,
     decimal? ConsultationCost,
     string? AppointmentType,
     string? Address,
+    string? City,
     string? Province,
     string? NationalLicense,
     string? ProvincialLicense,
     string? Biography,
-    List<int>? SpecialtyIds
+    List<int>? SpecialtyIds,
+    List<int>? HealthInsuranceIds,
+    List<CompleteRegistrationHealthInsuranceRequest>? HealthInsurances
+);
+
+public sealed record CompleteRegistrationHealthInsuranceRequest(
+    int HealthInsuranceId,
+    string? AffiliateNumber,
+    string? PlanName
 );
 
 public sealed class CompleteRegistrationRequestValidator
@@ -69,6 +79,10 @@ public sealed class CompleteRegistrationRequestValidator
                     .NotNull()
                     .Must(ids => ids is { Count: > 0 })
                     .WithMessage("Debes enviar al menos una especialidad.");
+                RuleFor(x => x.City)
+                    .NotEmpty()
+                    .MaximumLength(100)
+                    .When(x => x.RegistrationKind == IdentityRoles.PROFESIONAL);
             }
         );
     }

@@ -6,5 +6,13 @@ public record CreatePatientRequest(
     int Gender,
     string Email,
     string FirstName,
-    string LastName
+    string LastName,
+    bool HasCud,
+    List<PatientHealthInsuranceRequest> HealthInsurances
+);
+
+public record PatientHealthInsuranceRequest(
+    int HealthInsuranceId,
+    string? AffiliateNumber,
+    string? PlanName
 );

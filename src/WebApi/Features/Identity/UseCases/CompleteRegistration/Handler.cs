@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using WebApi.Features.Identity.Domain;
 using WebApi.Features.Identity.Shared.Auth;
 using WebApi.Features.Identity.Shared.Authorization;
@@ -63,6 +62,16 @@ public sealed class CompleteRegistrationHandler(
 
         if (request.RegistrationKind == IdentityRoles.PACIENTE)
         {
+            var patientHealthInsurances =
+                request
+                    .HealthInsurances?.Select(x => new PatientHealthInsuranceRequest(
+                        x.HealthInsuranceId,
+                        x.AffiliateNumber,
+                        x.PlanName
+                    ))
+                    .ToList()
+                ?? [];
+
             var patientResult = await createPatientHandler.HandleAsync(
                 new CreatePatientRequest(
                     ApplicationUserId: user.Id,
@@ -70,7 +79,9 @@ public sealed class CompleteRegistrationHandler(
                     Gender: request.Gender!.Value,
                     Email: user.Email ?? string.Empty,
                     FirstName: user.FirstName ?? string.Empty,
-                    LastName: user.LastName ?? string.Empty
+                    LastName: user.LastName ?? string.Empty,
+                    HasCud: request.HasCud ?? false,
+                    HealthInsurances: patientHealthInsurances
                 ),
                 ct
             );
@@ -95,10 +106,12 @@ public sealed class CompleteRegistrationHandler(
                     AppointmentType: request.AppointmentType!,
                     Address: request.Address,
                     Province: request.Province!,
+                    City: request.City!,
                     NationalLicense: request.NationalLicense!,
                     ProvincialLicense: request.ProvincialLicense!,
                     Biography: request.Biography,
-                    SpecialtyIds: request.SpecialtyIds!
+                    SpecialtyIds: request.SpecialtyIds!,
+                    HealthInsuranceIds: request.HealthInsuranceIds
                 ),
                 ct
             );

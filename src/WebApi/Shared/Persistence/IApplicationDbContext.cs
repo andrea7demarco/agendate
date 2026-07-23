@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApi.Features.HealthInsurances.Domain;
 using WebApi.Features.Identity.Domain;
 using WebApi.Features.Patients.Domain;
 using WebApi.Features.People.Domain;
@@ -14,6 +15,11 @@ public interface IApplicationDbContext
 
     DbSet<Specialty> Specialties { get; }
     DbSet<ProfessionalSpecialty> ProfessionalSpecialties { get; }
+    DbSet<ProfessionalLocation> ProfessionalLocations { get; }
     DbSet<Patient> Patients { get; }
+    DbSet<HealthInsurance> HealthInsurances { get; }
+    DbSet<ProfessionalHealthInsurance> ProfessionalHealthInsurances { get; }
+    DbSet<PatientHealthInsurance> PatientHealthInsurances { get; }
+
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

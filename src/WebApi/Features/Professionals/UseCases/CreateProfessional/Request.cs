@@ -15,5 +15,6 @@ public record CreateProfessionalRequest(
     string NationalLicense,
     string ProvincialLicense,
     string? Biography,
-    List<int> SpecialtyIds
+    List<int> SpecialtyIds,
+    List<int>? HealthInsuranceIds
 );
