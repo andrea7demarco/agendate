@@ -16,6 +16,9 @@ public interface IApplicationDbContext
     DbSet<Specialty> Specialties { get; }
     DbSet<ProfessionalSpecialty> ProfessionalSpecialties { get; }
     DbSet<ProfessionalLocation> ProfessionalLocations { get; }
+    DbSet<ProfessionalAvailability> ProfessionalAvailabilities { get; }
+    DbSet<ProfessionalTraining> ProfessionalTrainings { get; }
+    DbSet<ProfessionalPatientGroup> ProfessionalPatientGroups { get; }
     DbSet<Patient> Patients { get; }
     DbSet<HealthInsurance> HealthInsurances { get; }
     DbSet<ProfessionalHealthInsurance> ProfessionalHealthInsurances { get; }

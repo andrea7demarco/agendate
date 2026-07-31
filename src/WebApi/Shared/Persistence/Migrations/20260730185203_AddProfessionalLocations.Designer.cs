@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Shared.Persistence;
 
 #nullable disable
 
-namespace WebApi.Shared.Persistence.Migrations
+namespace WebApi.shared.persistence.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260730185203_AddProfessionalLocations")]
+    partial class AddProfessionalLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,22 +371,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalAvailability", b =>
-                {
-                    b.Property<int>("ProfessionalId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TimeSlot")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ProfessionalId", "DayOfWeek", "TimeSlot");
-
-                    b.ToTable("ProfessionalAvailabilities");
-                });
-
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalHealthInsurance", b =>
                 {
                     b.Property<int>("ProfessionalId")
@@ -475,19 +462,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.ToTable("ProfessionalLocations");
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalPatientGroup", b =>
-                {
-                    b.Property<int>("ProfessionalId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PatientGroup")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ProfessionalId", "PatientGroup");
-
-                    b.ToTable("ProfessionalPatientGroups");
-                });
-
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalSpecialty", b =>
                 {
                     b.Property<int>("ProfessionalId")
@@ -501,43 +475,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.HasIndex("SpecialtyId");
 
                     b.ToTable("ProfessionalSpecialties");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalTraining", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("Institution")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("ProfessionalId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<int?>("Year")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfessionalId");
-
-                    b.ToTable("ProfessionalTrainings");
                 });
 
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.Specialty", b =>
@@ -595,13 +532,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Property<decimal>("ConsultationCost")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("DegreeTitle")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.Property<int?>("GraduationYear")
-                        .HasColumnType("integer");
-
                     b.Property<string>("NationalLicense")
                         .HasColumnType("text");
 
@@ -610,10 +540,6 @@ namespace WebApi.Shared.Persistence.Migrations
 
                     b.Property<string>("ProvincialLicense")
                         .HasColumnType("text");
-
-                    b.Property<string>("University")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
 
                     b.HasDiscriminator().HasValue("Professional");
                 });
@@ -709,17 +635,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalAvailability", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
-                        .WithMany("Availabilities")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Professional");
-                });
-
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalHealthInsurance", b =>
                 {
                     b.HasOne("WebApi.Features.HealthInsurances.Domain.HealthInsurance", "HealthInsurance")
@@ -750,17 +665,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Navigation("Professional");
                 });
 
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalPatientGroup", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
-                        .WithMany("PatientGroups")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Professional");
-                });
-
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalSpecialty", b =>
                 {
                     b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
@@ -778,17 +682,6 @@ namespace WebApi.Shared.Persistence.Migrations
                     b.Navigation("Professional");
 
                     b.Navigation("Specialty");
-                });
-
-            modelBuilder.Entity("WebApi.Features.Professionals.Domain.ProfessionalTraining", b =>
-                {
-                    b.HasOne("WebApi.Features.Professionals.Domain.Professional", "Professional")
-                        .WithMany("Trainings")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Professional");
                 });
 
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.Specialty", b =>
@@ -827,17 +720,11 @@ namespace WebApi.Shared.Persistence.Migrations
 
             modelBuilder.Entity("WebApi.Features.Professionals.Domain.Professional", b =>
                 {
-                    b.Navigation("Availabilities");
-
                     b.Navigation("Locations");
-
-                    b.Navigation("PatientGroups");
 
                     b.Navigation("ProfessionalHealthInsurances");
 
                     b.Navigation("ProfessionalSpecialties");
-
-                    b.Navigation("Trainings");
                 });
 #pragma warning restore 612, 618
         }

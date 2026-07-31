@@ -80,6 +80,12 @@ public class CreateProfessionalHandler
             );
 
         var healthInsuranceIds = request.HealthInsuranceIds?.Distinct().ToList() ?? [];
+        var locations = request.Locations ?? [];
+        var availabilities =
+            request.Availabilities?.DistinctBy(x => new { x.DayOfWeek, x.TimeSlot }).ToList() ?? [];
+        var patientGroups = request.PatientGroups?.Distinct().ToList() ?? [];
+        var trainings =
+            request.Trainings?.Where(x => !string.IsNullOrWhiteSpace(x.Title)).ToList() ?? [];
 
         var existingHealthInsuranceIds = await _context
             .HealthInsurances.Where(x => healthInsuranceIds.Contains(x.Id) && x.IsActive)
@@ -116,8 +122,50 @@ public class CreateProfessionalHandler
             NationalLicense = request.NationalLicense,
             ProvincialLicense = request.ProvincialLicense,
             Biography = request.Biography,
+            DegreeTitle = request.DegreeTitle,
+            University = request.University,
+            GraduationYear = request.GraduationYear,
             ProfessionalHealthInsurances = healthInsuranceIds
                 .Select(id => new ProfessionalHealthInsurance { HealthInsuranceId = id })
+                .ToList(),
+            Locations = locations
+                .Select(location => new ProfessionalLocation
+                {
+                    Name = location.Name,
+                    FormattedAddress = location.FormattedAddress,
+                    Street = location.Street,
+                    StreetNumber = location.StreetNumber,
+                    City = location.City,
+                    Province = location.Province,
+                    PostalCode = location.PostalCode,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude,
+                    ExternalPlaceId = location.ExternalPlaceId,
+                    ExternalProvider = location.ExternalProvider,
+                    Instructions = location.Instructions,
+                })
+                .ToList(),
+            Availabilities = availabilities
+                .Select(availability => new ProfessionalAvailability
+                {
+                    DayOfWeek = (DayOfWeek)availability.DayOfWeek,
+                    TimeSlot = (ProfessionalTimeSlot)availability.TimeSlot,
+                })
+                .ToList(),
+            PatientGroups = patientGroups
+                .Select(patientGroup => new ProfessionalPatientGroup
+                {
+                    PatientGroup = (PatientGroup)patientGroup,
+                })
+                .ToList(),
+            Trainings = trainings
+                .Select(training => new ProfessionalTraining
+                {
+                    Title = training.Title.Trim(),
+                    Institution = training.Institution,
+                    Year = training.Year,
+                    Description = training.Description,
+                })
                 .ToList(),
         };
 

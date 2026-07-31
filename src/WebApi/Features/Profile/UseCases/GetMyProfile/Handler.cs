@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApi.Features.Professionals.Domain;
 using WebApi.Shared.Persistence;
 using WebApi.Shared.Results;
 using WebApi.Shared.Utils;
@@ -37,6 +38,7 @@ public class GetMyProfileHandler
                 patient.Email,
                 Gender = patient.Gender.ToString(),
                 patient.BirthDate,
+                patient.HasCud,
                 Age = AgeCalculator.Calculate(patient.BirthDate),
                 HealthInsurances = patient.PatientHealthInsurances.Select(phi => new
                 {
@@ -59,6 +61,9 @@ public class GetMyProfileHandler
                 .ThenInclude(ps => ps.Specialty)
             .Include(p => p.ProfessionalHealthInsurances)
                 .ThenInclude(phi => phi.HealthInsurance)
+            .Include(p => p.Availabilities)
+            .Include(p => p.PatientGroups)
+            .Include(p => p.Trainings)
             .FirstOrDefaultAsync(p => p.ApplicationUserId == applicationUserId, ct);
 
         if (professional is not null)
@@ -80,6 +85,9 @@ public class GetMyProfileHandler
                 professional.NationalLicense,
                 professional.ProvincialLicense,
                 professional.Biography,
+                professional.DegreeTitle,
+                professional.University,
+                professional.GraduationYear,
                 Specialties = professional.ProfessionalSpecialties.Select(ps => new
                 {
                     ps.Specialty.Id,
@@ -91,6 +99,28 @@ public class GetMyProfileHandler
                     phi.HealthInsurance.Name,
                     phi.HealthInsurance.Acronym,
                 }),
+                Availabilities = professional.Availabilities.Select(availability => new
+                {
+                    DayOfWeek = (int)availability.DayOfWeek,
+                    DayName = GetDayName(availability.DayOfWeek),
+                    TimeSlot = (int)availability.TimeSlot,
+                    TimeSlotName = GetTimeSlotName(availability.TimeSlot),
+                }),
+                PatientGroups = professional.PatientGroups.Select(patientGroup => new
+                {
+                    Id = (int)patientGroup.PatientGroup,
+                    Name = GetPatientGroupName(patientGroup.PatientGroup),
+                }),
+                Trainings = professional
+                    .Trainings.Where(training => training.IsActive)
+                    .Select(training => new
+                    {
+                        training.Id,
+                        training.Title,
+                        training.Institution,
+                        training.Year,
+                        training.Description,
+                    }),
             };
 
             return Result<MyProfileResponse>.Success(
@@ -102,4 +132,38 @@ public class GetMyProfileHandler
             Error.NotFound("profile.not_found", "El usuario no tiene un perfil asociado.")
         );
     }
+
+    private static string GetDayName(DayOfWeek dayOfWeek) =>
+        dayOfWeek switch
+        {
+            DayOfWeek.Monday => "Lunes",
+            DayOfWeek.Tuesday => "Martes",
+            DayOfWeek.Wednesday => "Miercoles",
+            DayOfWeek.Thursday => "Jueves",
+            DayOfWeek.Friday => "Viernes",
+            DayOfWeek.Saturday => "Sabado",
+            DayOfWeek.Sunday => "Domingo",
+            _ => dayOfWeek.ToString(),
+        };
+
+    private static string GetTimeSlotName(ProfessionalTimeSlot timeSlot) =>
+        timeSlot switch
+        {
+            ProfessionalTimeSlot.Morning => "Maniana",
+            ProfessionalTimeSlot.Midday => "Mediodia",
+            ProfessionalTimeSlot.Afternoon => "Tarde",
+            ProfessionalTimeSlot.Night => "Noche",
+            _ => timeSlot.ToString(),
+        };
+
+    private static string GetPatientGroupName(PatientGroup patientGroup) =>
+        patientGroup switch
+        {
+            PatientGroup.Babies => "Bebes",
+            PatientGroup.Children => "Ninios",
+            PatientGroup.Teenagers => "Adolescentes",
+            PatientGroup.Adults => "Adultos",
+            PatientGroup.OlderAdults => "Personas mayores",
+            _ => patientGroup.ToString(),
+        };
 }

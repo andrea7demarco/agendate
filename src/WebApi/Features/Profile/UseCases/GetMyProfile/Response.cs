@@ -12,6 +12,7 @@ public record PatientProfileResponse(
     string Email,
     string Gender,
     DateOnly BirthDate,
+    bool HasCud,
     AgeInfo Age,
     List<PatientHealthInsuranceProfileResponse> HealthInsurances
 );
@@ -31,8 +32,14 @@ public record ProfessionalProfileResponse(
     string NationalLicense,
     string ProvincialLicense,
     string? Biography,
+    string? DegreeTitle,
+    string? University,
+    int? GraduationYear,
     List<SpecialtyProfileResponse> Specialties,
-    List<ProfessionalHealthInsuranceProfileResponse> HealthInsurances
+    List<ProfessionalHealthInsuranceProfileResponse> HealthInsurances,
+    List<ProfessionalAvailabilityProfileResponse> Availabilities,
+    List<ProfessionalPatientGroupProfileResponse> PatientGroups,
+    List<ProfessionalTrainingProfileResponse> Trainings
 );
 
 public record SpecialtyProfileResponse(int Id, string Name);
@@ -46,3 +53,20 @@ public record PatientHealthInsuranceProfileResponse(
 );
 
 public record ProfessionalHealthInsuranceProfileResponse(int Id, string Name, string Acronym);
+
+public record ProfessionalAvailabilityProfileResponse(
+    int DayOfWeek,
+    string DayName,
+    int TimeSlot,
+    string TimeSlotName
+);
+
+public record ProfessionalPatientGroupProfileResponse(int Id, string Name);
+
+public record ProfessionalTrainingProfileResponse(
+    int Id,
+    string Title,
+    string? Institution,
+    int? Year,
+    string? Description
+);

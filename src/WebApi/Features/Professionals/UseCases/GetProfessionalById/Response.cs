@@ -2,6 +2,36 @@ namespace WebApi.Features.Professionals.UseCases.GetProfessionalById;
 
 public record SpecialtyResponse(int Id, string Name, int? ParentSpecialtyId);
 
+public record ProfessionalLocationResponse(
+    int Id,
+    string Name,
+    string? FormattedAddress,
+    string? City,
+    string? Province,
+    decimal? Latitude,
+    decimal? Longitude,
+    string? ExternalPlaceId,
+    string? ExternalProvider,
+    string? Instructions
+);
+
+public record ProfessionalAvailabilityResponse(
+    int DayOfWeek,
+    string DayName,
+    int TimeSlot,
+    string TimeSlotName
+);
+
+public record ProfessionalTrainingResponse(
+    int Id,
+    string Title,
+    string? Institution,
+    int? Year,
+    string? Description
+);
+
+public record ProfessionalPatientGroupResponse(int Id, string Name);
+
 public record ProfessionalResponse(
     int Id,
     string? ApplicationUserId,
@@ -16,7 +46,14 @@ public record ProfessionalResponse(
     string? NationalLicense,
     string? ProvincialLicense,
     string? Biography,
-    List<SpecialtyResponse> Specialties
+    string? DegreeTitle,
+    string? University,
+    int? GraduationYear,
+    List<SpecialtyResponse> Specialties,
+    List<ProfessionalLocationResponse> Locations,
+    List<ProfessionalAvailabilityResponse> Availabilities,
+    List<ProfessionalPatientGroupResponse> PatientGroups,
+    List<ProfessionalTrainingResponse> Trainings
 );
 
 //record tiene propiedades de solo lectura

@@ -15,5 +15,14 @@ public class UpdatePatientRequestValidator : AbstractValidator<UpdatePatientRequ
         RuleFor(x => x.Gender)
             .InclusiveBetween(1, 3)
             .WithMessage("El genero debe ser Masculino, Femenino u Otro.");
+        RuleFor(x => x.HealthInsurances)
+            .Must(items => items is null || items.All(item => item.HealthInsuranceId > 0))
+            .WithMessage("Las obras sociales seleccionadas son invalidas.");
+        RuleForEach(x => x.HealthInsurances)
+            .ChildRules(item =>
+            {
+                item.RuleFor(x => x.AffiliateNumber).MaximumLength(80);
+                item.RuleFor(x => x.PlanName).MaximumLength(100);
+            });
     }
 }

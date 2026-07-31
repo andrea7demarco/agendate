@@ -22,6 +22,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Specialty> Specialties => Set<Specialty>();
     public DbSet<ProfessionalSpecialty> ProfessionalSpecialties => Set<ProfessionalSpecialty>();
     public DbSet<ProfessionalLocation> ProfessionalLocations => Set<ProfessionalLocation>();
+    public DbSet<ProfessionalAvailability> ProfessionalAvailabilities =>
+        Set<ProfessionalAvailability>();
+    public DbSet<ProfessionalTraining> ProfessionalTrainings => Set<ProfessionalTraining>();
+    public DbSet<ProfessionalPatientGroup> ProfessionalPatientGroups =>
+        Set<ProfessionalPatientGroup>();
     public DbSet<ProfessionalHealthInsurance> ProfessionalHealthInsurances =>
         Set<ProfessionalHealthInsurance>();
 
@@ -76,17 +81,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
             e.Property(x => x.Name).HasMaxLength(150).IsRequired();
 
-            e.Property(x => x.Street).HasMaxLength(150).IsRequired();
+            e.Property(x => x.FormattedAddress).HasMaxLength(250);
 
-            e.Property(x => x.StreetNumber).HasMaxLength(20).IsRequired();
+            e.Property(x => x.Street).HasMaxLength(150);
 
-            e.Property(x => x.Floor).HasMaxLength(20);
+            e.Property(x => x.StreetNumber).HasMaxLength(20);
 
-            e.Property(x => x.Office).HasMaxLength(30);
+            e.Property(x => x.City).HasMaxLength(100);
 
-            e.Property(x => x.City).HasMaxLength(100).IsRequired();
-
-            e.Property(x => x.Province).HasMaxLength(100).IsRequired();
+            e.Property(x => x.Province).HasMaxLength(100);
 
             e.Property(x => x.PostalCode).HasMaxLength(20);
 
@@ -94,7 +97,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
             e.Property(x => x.Longitude).HasPrecision(9, 6);
 
-            e.Property(x => x.GooglePlaceId).HasMaxLength(250);
+            e.Property(x => x.ExternalPlaceId).HasMaxLength(250);
+
+            e.Property(x => x.ExternalProvider).HasMaxLength(50);
 
             e.Property(x => x.Instructions).HasMaxLength(500);
 
@@ -104,6 +109,62 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .OnDelete(DeleteBehavior.Cascade);
 
             e.HasIndex(x => x.ProfessionalId);
+        });
+
+        builder.Entity<Professional>(e =>
+        {
+            e.Property(x => x.DegreeTitle).HasMaxLength(150);
+
+            e.Property(x => x.University).HasMaxLength(150);
+        });
+
+        builder.Entity<ProfessionalAvailability>(e =>
+        {
+            e.HasKey(x => new
+            {
+                x.ProfessionalId,
+                x.DayOfWeek,
+                x.TimeSlot,
+            });
+
+            e.Property(x => x.DayOfWeek).HasConversion<int>();
+
+            e.Property(x => x.TimeSlot).HasConversion<int>();
+
+            e.HasOne(x => x.Professional)
+                .WithMany(x => x.Availabilities)
+                .HasForeignKey(x => x.ProfessionalId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<ProfessionalTraining>(e =>
+        {
+            e.HasKey(x => x.Id);
+
+            e.Property(x => x.Title).HasMaxLength(200).IsRequired();
+
+            e.Property(x => x.Institution).HasMaxLength(200);
+
+            e.Property(x => x.Description).HasMaxLength(500);
+
+            e.HasOne(x => x.Professional)
+                .WithMany(x => x.Trainings)
+                .HasForeignKey(x => x.ProfessionalId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(x => x.ProfessionalId);
+        });
+
+        builder.Entity<ProfessionalPatientGroup>(e =>
+        {
+            e.HasKey(x => new { x.ProfessionalId, x.PatientGroup });
+
+            e.Property(x => x.PatientGroup).HasConversion<int>();
+
+            e.HasOne(x => x.Professional)
+                .WithMany(x => x.PatientGroups)
+                .HasForeignKey(x => x.ProfessionalId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<HealthInsurance>(e =>

@@ -94,6 +94,45 @@ public sealed class CompleteRegistrationHandler(
 
         if (request.RegistrationKind == IdentityRoles.PROFESIONAL)
         {
+            var locations =
+                request
+                    .Locations?.Select(x => new ProfessionalLocationRequest(
+                        x.Name,
+                        x.FormattedAddress,
+                        x.Street,
+                        x.StreetNumber,
+                        x.City,
+                        x.Province,
+                        x.PostalCode,
+                        x.Latitude,
+                        x.Longitude,
+                        x.ExternalPlaceId,
+                        x.ExternalProvider,
+                        x.Instructions
+                    ))
+                    .ToList()
+                ?? [];
+
+            var availabilities =
+                request
+                    .Availabilities?.Select(x => new ProfessionalAvailabilityRequest(
+                        x.DayOfWeek,
+                        x.TimeSlot
+                    ))
+                    .ToList()
+                ?? [];
+
+            var trainings =
+                request
+                    .Trainings?.Select(x => new ProfessionalTrainingRequest(
+                        x.Title,
+                        x.Institution,
+                        x.Year,
+                        x.Description
+                    ))
+                    .ToList()
+                ?? [];
+
             var professionalResult = await createProfessionalHandler.HandleAsync(
                 new CreateProfessionalRequest(
                     ApplicationUserId: user.Id,
@@ -110,8 +149,15 @@ public sealed class CompleteRegistrationHandler(
                     NationalLicense: request.NationalLicense!,
                     ProvincialLicense: request.ProvincialLicense!,
                     Biography: request.Biography,
+                    DegreeTitle: request.DegreeTitle,
+                    University: request.University,
+                    GraduationYear: request.GraduationYear,
                     SpecialtyIds: request.SpecialtyIds!,
-                    HealthInsuranceIds: request.HealthInsuranceIds
+                    HealthInsuranceIds: request.HealthInsuranceIds,
+                    Locations: locations,
+                    Availabilities: availabilities,
+                    PatientGroups: request.PatientGroups,
+                    Trainings: trainings
                 ),
                 ct
             );

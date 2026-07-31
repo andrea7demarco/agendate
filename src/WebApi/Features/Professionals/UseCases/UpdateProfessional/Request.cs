@@ -13,5 +13,22 @@ public record UpdateProfessionalRequest(
     string? NationalLicense,
     string? ProvincialLicense,
     string? Biography,
-    List<int> SpecialtyIds
+    string? DegreeTitle,
+    string? University,
+    int? GraduationYear,
+    List<int> SpecialtyIds,
+    List<int>? HealthInsuranceIds,
+    List<ProfessionalAvailabilityRequest>? Availabilities,
+    List<int>? PatientGroups,
+    List<ProfessionalTrainingRequest>? Trainings
+);
+
+public record ProfessionalAvailabilityRequest(int DayOfWeek, int TimeSlot);
+
+public record ProfessionalTrainingRequest(
+    int? Id,
+    string Title,
+    string? Institution,
+    int? Year,
+    string? Description
 );
